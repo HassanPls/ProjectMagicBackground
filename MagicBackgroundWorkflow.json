@@ -1,0 +1,144 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "gerar-fundo",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -448,
+        0
+      ],
+      "id": "b314f9a9-8f08-4626-8405-b5c225f57d1b",
+      "name": "Webhook",
+      "webhookId": "866041a6-72e6-4a82-9a4e-11566ad3e3f7"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        416,
+        0
+      ],
+      "id": "c0c7d9e7-bb04-4c90-a273-d57536cc3393",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.description }}",
+        "options": {
+          "systemMessage": "Gerador de Animações de FUNDO DE PAGINA CSS\nCrie uma animação CSS de FUNDO DE SITE e responda somente com este formato, em json puro\n\n{\n\"code\": \"HTML gerado\",\n\"preview\": \"<div class=\"bg\"></div>\n<div class=\"bg bg2\"></div>\n<div class=\"bg bg3\"></div>\",\n\"style\": \"CSS puro\"\n}\n\nExemplo de fundo animado\n\n{\ncode: \"<div class=\"bg\"></div>\n<div class=\"bg bg2\"></div>\n<div class=\"bg bg3\"></div>\",\n\nstyle:\"html {\n  height:100%;\n}\n\nbody {\n  margin:0;\n}\n\n.bg {\n  animation:slide 3s ease-in-out infinite alternate;\n  background-image: linear-gradient(-60deg, #6c3 50%, #09f 50%);\n  bottom:0;\n  left:-50%;\n  opacity:.5;\n  position:fixed;\n  right:-50%;\n  top:0;\n  z-index:-1;\n}\n\n.bg2 {\n  animation-direction:alternate-reverse;\n  animation-duration:4s;\n}\n\n.bg3 {\n  animation-duration:5s;\n}\n\n.content {\n  background-color:rgba(255,255,255,.8);\n  border-radius:.25em;\n  box-shadow:0 0 .25em rgba(0,0,0,.25);\n  box-sizing:border-box;\n  left:50%;\n  padding:10vmin;\n  position:fixed;\n  text-align:center;\n  top:50%;\n  transform:translate(-50%, -50%);\n}\n\nh1 {\n  font-family:monospace;\n}\n\n@keyframes slide {\n  0% {\n    transform:translateX(-25%);\n  }\n  100% {\n    transform:translateX(25%);\n  }\n}\"\n}\n\nREGRAS:\nSem quebras de linha\nUse aspas simples dentro das strings\nAnimações coloridas e impressionantes\nCódigo simples com visual marcante\nse atente pra criar todas os elementos html que você definiu nas classes css e vice versa\nnão retorne nenhuma div ou estilo com loader, ou classe loader\nnão retorne nenhuma propriedade com overflow"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -112,
+        0
+      ],
+      "id": "a1749acd-50a9-4bbe-a2c8-2168410147b2",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -112,
+        192
+      ],
+      "id": "60eb2a34-8473-44fb-9f69-b172a74a9fe4",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "QzrFLWzDcEsknUgn",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const output = $input.first().json.output.replace(\"json\", \"\").replaceAll(\"`\", \"\");\nreturn {output};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ],
+      "id": "3912e1c9-ace1-4259-b968-54fe95c0afd4",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e0cfa3d4-a6bb-4f64-a876-69f72e6b2db3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "792b78cf209ecf7dba1149c9ec11d243856ba003d712c0314748f59e4384c3ed"
+  },
+  "id": "FmiXFljTqTI3euII",
+  "tags": []
+}
